@@ -31,9 +31,8 @@ public class SellerDaoJDBC implements SellerDao {
     @Override
     public Seller findById(Integer id) {
         try (Connection connection=ConnectionFactory.getConnection()){
-            PreparedStatement st = null;
-            ResultSet rs= null;
-
+            PreparedStatement st;
+            ResultSet rs;
             st=   connection.prepareStatement(
                     "select *\n" +
                             "from seller inner join department\n" +
@@ -43,16 +42,9 @@ public class SellerDaoJDBC implements SellerDao {
             st.setInt(1,id);
             rs = st.executeQuery();
             if (rs.next()){
-                Department department = new Department();
-                department.setId(rs.getInt("DepartmentId"));
-                department.setName(rs.getString("department.Name"));
-                Seller seller = new Seller();
-                seller.setId(rs.getInt("Id"));
-                seller.setName(rs.getString("Name"));
-                seller.setGmail(rs.getString("Email"));
-                seller.setBaseSalary(rs.getDouble("BaseSalary"));
-                seller.setBirthDate(rs.getDate("BirthDate"));
-                seller.setDepartment(department);
+                Department department = instanciaDepartment(rs);
+                Seller seller;
+                seller = instanciaSeller(rs,department);
                 return seller;
             }
             return null;
@@ -63,6 +55,24 @@ public class SellerDaoJDBC implements SellerDao {
 
 
 
+    }
+
+    private Seller instanciaSeller(ResultSet rs, Department department) throws SQLException {
+      Seller seller=  new Seller();
+        seller.setId(rs.getInt("Id"));
+        seller.setName(rs.getString("Name"));
+        seller.setGmail(rs.getString("Email"));
+        seller.setBaseSalary(rs.getDouble("BaseSalary"));
+        seller.setBirthDate(rs.getDate("BirthDate"));
+        seller.setDepartment(department);
+        return seller;
+    }
+
+    private Department instanciaDepartment (ResultSet rs) throws SQLException {
+       Department department= new Department();
+        department.setId(rs.getInt("DepartmentId"));
+        department.setName(rs.getString("department.Name"));
+        return department;
     }
 
     @Override
