@@ -9,7 +9,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SellerDaoJDBC implements SellerDao {
 
@@ -34,7 +37,7 @@ public class SellerDaoJDBC implements SellerDao {
             PreparedStatement st;
             ResultSet rs;
             st=   connection.prepareStatement(
-                    "select *\n" +
+                    "select*\n" +
                             "from seller inner join department\n" +
                             "on seller.DepartmentId = department.Id\n" +
                             "where seller.Id=?;\n"
@@ -78,5 +81,39 @@ public class SellerDaoJDBC implements SellerDao {
     @Override
     public List<Seller> findAll() {
         return null;
+    }
+
+    @Override
+    public List<Seller> findByDepartment(Department department) {
+
+        try (Connection connection=ConnectionFactory.getConnection()){
+            PreparedStatement st;
+            ResultSet rs;
+            st=   connection.prepareStatement(
+                    "select*\n" +
+                            "from seller inner join department\n" +
+                            "on seller.DepartmentId = department.Id\n" +
+                            "where DepartmentId=?;\n"     );
+
+            st.setInt(1,department.getId());
+            rs = st.executeQuery();
+
+            List<Seller>list= new ArrayList<>();
+            Map<Integer, Department>map=new HashMap<>();
+
+            while (rs.next()){
+                Department dep =map.get(rs.getInt("DepartmentId"));
+                if (dep==null){
+                    dep=instanciaDepartment(rs);
+                    map.put(rs.getInt("DepartmentId"),dep);
+                }
+                Seller seller= instanciaSeller(rs,dep);
+                list.add(seller);
+
+            }
+            return list;
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 }
