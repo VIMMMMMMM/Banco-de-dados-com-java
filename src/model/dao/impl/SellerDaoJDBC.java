@@ -47,7 +47,24 @@ try (Connection connection= ConnectionFactory.getConnection()){
 
     @Override
     public void update(Seller obj) {
+        PreparedStatement st;
+        try (Connection connection= ConnectionFactory.getConnection()){
+            st=connection.prepareStatement(
+                    "UPDATE seller\n"+
+                            "set Name=?,Email=?,BirthDate=?,BaseSalary=?,DepartmentId=?\n" +
+                            "where Id=?\n"
 
+            );
+            st.setString(1,obj.getName());
+            st.setString(2, obj.getGmail());
+            st.setDate(3,new Date(obj.getBirthDate().getTime()));
+            st.setDouble(4,obj.getBaseSalary());
+            st.setInt(5,obj.getDepartment().getId());
+            st.setInt(6,obj.getId());
+           st.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
