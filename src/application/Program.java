@@ -40,6 +40,10 @@ public class Program {
         seller.setName("Bob Brown");
         sellerDao.update(seller);
         System.out.println("atualizacao feita");
+
+        System.out.println("\n teste deleteById");
+        sellerDao.deleteById(9);
+        System.out.println("Deletado com sucesso");
     }
 
 }

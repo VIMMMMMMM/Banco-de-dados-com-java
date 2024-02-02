@@ -69,7 +69,14 @@ try (Connection connection= ConnectionFactory.getConnection()){
 
     @Override
     public void deleteById(Integer id) {
-
+        PreparedStatement st;
+        try (Connection connection = ConnectionFactory.getConnection()){
+            st= connection.prepareStatement("DELETE from seller where Id=?");
+            st.setInt(1,id);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
