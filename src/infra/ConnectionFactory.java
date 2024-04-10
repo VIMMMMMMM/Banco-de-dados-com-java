@@ -9,7 +9,7 @@ public class ConnectionFactory {
     public static Connection getConnection(){
         try {
 
-           return DriverManager.getConnection("jdbc:mysql://localhost:3306/bancoteste ","root","Ed136425@@");
+           return DriverManager.getConnection("jdbc:mysql://localhost:3306/bancoteste ","*","*");
         }catch (SQLException e){
             throw new RuntimeException(e);
         }
